@@ -14,13 +14,14 @@ export default function AuthModal({ mode, onClose, onSwitch }) {
     setLoading(true)
     try {
       if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        console.log("LOGIN ATTEMPT:", { email, data, error })
         if (error) throw error
         toast.success('Welcome back! 🙏')
         onClose()
       } else {
         if (!name.trim()) { toast.error('Please enter your name'); setLoading(false); return }
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email, password,
           options: { data: { full_name: name } }
         })

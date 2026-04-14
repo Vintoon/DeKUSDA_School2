@@ -34,7 +34,13 @@ export default function Home({ user, profile }) {
   const [stats, setStats] = useState({ total: 0, sermons: 0, contributors: 0 })
   const verse = SCRIPTURES[new Date().getDate() % SCRIPTURES.length]
 
-  useEffect(() => { loadPublications() }, [category])
+  useEffect(() => { 
+    // Debug environment variables
+    console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
+    console.log("SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    
+    loadPublications() 
+  }, [category])
 
   async function loadPublications() {
     setLoading(true)
