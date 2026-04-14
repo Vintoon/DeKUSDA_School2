@@ -39,8 +39,29 @@ export default function Home({ user, profile }) {
     console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
     console.log("SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
     
+    // Test Supabase connection
+    testSupabaseConnection()
+    
     loadPublications() 
   }, [category])
+
+  async function testSupabaseConnection() {
+    console.log("=== TESTING SUPABASE CONNECTION ===")
+    try {
+      const { data, error } = await supabase
+        .from("publications")
+        .select("*")
+        .eq("status", "approved")
+        .limit(1)
+      
+      console.log("TEST DATA:", data)
+      console.log("TEST ERROR:", error)
+      console.log("TEST ERROR DETAILS:", error?.details)
+      console.log("TEST ERROR HINT:", error?.hint)
+    } catch (err) {
+      console.log("TEST CATCH ERROR:", err)
+    }
+  }
 
   async function loadPublications() {
     setLoading(true)
