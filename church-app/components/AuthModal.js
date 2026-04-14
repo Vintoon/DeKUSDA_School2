@@ -22,8 +22,7 @@ export default function AuthModal({ mode, onClose, onSwitch }) {
       } else {
         if (!name.trim()) { toast.error('Please enter your name'); setLoading(false); return }
         const { data, error } = await supabase.auth.signUp({
-          email, password,
-          options: { data: { full_name: name } }
+          email, password
         })
         console.log("SIGNUP ATTEMPT:", { email, name, data, error })
         if (error) throw error
