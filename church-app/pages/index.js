@@ -34,7 +34,34 @@ export default function Home({ user, profile }) {
   const [stats, setStats] = useState({ total: 0, sermons: 0, contributors: 0 })
   const verse = SCRIPTURES[new Date().getDate() % SCRIPTURES.length]
 
-  useEffect(() => { loadPublications() }, [category])
+  useEffect(() => { 
+    // Debug environment variables
+    console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
+    console.log("SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    
+    // Test Supabase connection
+    testSupabaseConnection()
+    
+    loadPublications() 
+  }, [category])
+
+  async function testSupabaseConnection() {
+    console.log("=== TESTING SUPABASE CONNECTION ===")
+    try {
+      const { data, error } = await supabase
+        .from("publications")
+        .select("*")
+        .eq("status", "approved")
+        .limit(1)
+      
+      console.log("TEST DATA:", data)
+      console.log("TEST ERROR:", error)
+      console.log("TEST ERROR DETAILS:", error?.details)
+      console.log("TEST ERROR HINT:", error?.hint)
+    } catch (err) {
+      console.log("TEST CATCH ERROR:", err)
+    }
+  }
 
   async function loadPublications() {
     setLoading(true)
