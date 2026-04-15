@@ -21,14 +21,29 @@ export default function App({ Component, pageProps }) {
   }, [])
 
   async function fetchProfile(id) {
-    const { data } = await supabase.from('profiles').select('*').eq('id', id).single()
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single()
     setProfile(data)
   }
 
   return (
     <>
-      <Toaster position="bottom-right" toastOptions={{ style: { fontFamily: 'DM Sans, sans-serif', fontSize: '14px' } }} />
-      <Component {...pageProps} user={user} profile={profile} refreshProfile={() => user && fetchProfile(user.id)} />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: { fontFamily: 'DM Sans, sans-serif', fontSize: '14px' },
+          success: { iconTheme: { primary: '#2563eb', secondary: '#fff' } },
+        }}
+      />
+      <Component
+        {...pageProps}
+        user={user}
+        profile={profile}
+        refreshProfile={() => user && fetchProfile(user.id)}
+      />
     </>
   )
 }
