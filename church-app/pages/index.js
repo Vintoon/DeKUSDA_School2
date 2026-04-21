@@ -18,7 +18,7 @@ const RESOURCES = [
   { icon:'📖', name:'Bible Gateway',     url:'https://www.biblegateway.com',           desc:'Multiple Bible versions' },
   { icon:'✍️', name:'EGW Writings',      url:'https://egwwritings.org',                desc:'Ellen G. White Estate' },
   { icon:'🏛️', name:'White Estate',      url:'https://whiteestate.org',               desc:'Official EGW resources' },
-  { icon:'📗', name:'KJV Bible',        url:'https://www.kingjamesbibleonline.org/',             desc:'Bible with reading plans' },
+  { icon:'📗', name:'YouVersion',        url:'https://www.youversion.com',             desc:'Bible with reading plans' },
   { icon:'🎓', name:'Adventist Learning', url:'https://circle.adventistlearningcommunity.com/browse/161', desc:'SDA Online Courses' },
   { icon:'📘', name:'Amazing Facts',     url:'https://www.amazingfacts.org/bible-study/bible-study-guides', desc:'Bible study guides' },
 ]
@@ -107,33 +107,33 @@ export default function Home({ user, profile }) {
       {/* HERO */}
       <section className="hero-pattern text-white overflow-hidden relative">
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-7 sm:py-16 lg:py-20 relative">
+          <div className="grid lg:grid-cols-2 gap-6 items-center">
 
             {/* Left — always visible */}
             <div>
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-ui font-medium text-blue-200 mb-4">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs font-ui font-medium text-blue-200 mb-3">
                 ✞ Three Angels Church Ministry
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
-                Proclaiming<br /><span className="text-gold-400">God's Word</span><br />to the World
+              <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3">
+                Proclaiming <span className="text-gold-400">God's Word</span> to the World
               </h1>
-              <p className="font-body text-base sm:text-lg text-blue-200 leading-relaxed mb-6 max-w-lg">
+              <p className="font-body text-sm sm:text-lg text-blue-200 leading-relaxed mb-4 max-w-lg">
                 Sermons, devotionals, testimonies and Bible studies — reviewed, trusted, and freely shared.
               </p>
-              <div className="flex gap-3 flex-wrap">
-                <a href="#publications" className="px-5 py-2.5 bg-white text-brand-800 font-ui font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg text-sm">
-                  Browse Publications
+              <div className="flex gap-2.5">
+                <a href="#publications" className="px-4 py-2 bg-white text-brand-800 font-ui font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg text-xs sm:text-sm">
+                  Browse
                 </a>
-                <Link href="/submit" className="px-5 py-2.5 bg-gold-500 hover:bg-gold-600 text-white font-ui font-bold rounded-xl transition-all shadow-lg text-sm">
+                <Link href="/submit" className="px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-ui font-bold rounded-xl transition-all shadow-lg text-xs sm:text-sm">
                   Submit Article
                 </Link>
               </div>
 
-              {/* Verse card — mobile only, shown in left column */}
-              <div className="lg:hidden mt-6 bg-white/10 border border-white/20 backdrop-blur-sm rounded-2xl p-4">
-                <p className="font-body text-sm italic text-white/90 leading-relaxed mb-2">"{verse.text}"</p>
-                <p className="font-ui text-xs font-bold text-gold-400 tracking-widest uppercase">{verse.ref}</p>
+              {/* Verse card — mobile only */}
+              <div className="lg:hidden mt-4 bg-white/10 border border-white/20 backdrop-blur-sm rounded-xl p-3">
+                <p className="font-body text-xs italic text-white/90 leading-relaxed mb-1">"{verse.text}"</p>
+                <p className="font-ui text-[10px] font-bold text-gold-400 tracking-widest uppercase">{verse.ref}</p>
               </div>
             </div>
 
@@ -165,26 +165,26 @@ export default function Home({ user, profile }) {
       </div>
 
       {/* MAIN */}
-      <div id="publications" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div id="publications" className="max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-10">
 
         {/* Mobile resource strip — hidden on desktop */}
-        <div className="lg:hidden mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-display text-sm font-bold text-slate-700">📚 Study Resources</h3>
+        <div className="lg:hidden mb-5">
+          <div className="flex items-center justify-between mb-2.5">
+            <h3 className="font-display text-xs font-bold text-slate-700">📚 Study Resources</h3>
             <Link href="/resources" className="font-ui text-xs font-bold text-brand-600 hover:underline">View all →</Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4">
+          <div className="flex gap-2.5 overflow-x-auto pb-1.5 scrollbar-none -mx-3 px-3">
             {RESOURCES.map(r => (
               <a key={r.name} href={r.url} target="_blank" rel="noopener"
-                className="flex-shrink-0 flex flex-col items-center gap-1.5 bg-white border border-slate-100 rounded-xl p-3 shadow-sm w-[86px] text-center hover:border-brand-200 transition-colors">
-                <span className="text-2xl">{r.icon}</span>
-                <span className="font-ui text-xs font-medium text-slate-700 leading-tight line-clamp-2 w-full">{r.name}</span>
+                className="flex-shrink-0 flex flex-col items-center gap-1 bg-white border border-slate-100 rounded-xl p-2.5 shadow-sm w-[72px] text-center hover:border-brand-200 active:scale-95 transition-all">
+                <span className="text-xl">{r.icon}</span>
+                <span className="font-ui text-[10px] font-medium text-slate-700 leading-tight line-clamp-2 w-full">{r.name}</span>
               </a>
             ))}
             <Link href="/resources"
-              className="flex-shrink-0 flex flex-col items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 rounded-xl p-3 shadow-sm w-[86px] text-white text-center transition-colors">
-              <HiExternalLink size={20} />
-              <span className="font-ui text-xs font-semibold leading-tight">More</span>
+              className="flex-shrink-0 flex flex-col items-center justify-center gap-1 bg-brand-600 hover:bg-brand-700 rounded-xl p-2.5 shadow-sm w-[72px] text-white text-center transition-colors active:scale-95">
+              <HiExternalLink size={18} />
+              <span className="font-ui text-[10px] font-semibold leading-tight">More</span>
             </Link>
           </div>
         </div>
@@ -192,23 +192,23 @@ export default function Home({ user, profile }) {
         <div className="grid lg:grid-cols-[1fr_290px] gap-10">
           <div>
             {/* Search */}
-            <div className="relative mb-4">
-              <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+            <div className="relative mb-3">
+              <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search publications…"
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl font-ui text-sm bg-white focus:border-brand-400 outline-none"
+                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl font-ui text-sm bg-white focus:border-brand-400 outline-none"
               />
             </div>
 
-            {/* Category tabs — scrollable on mobile */}
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+            {/* Category tabs */}
+            <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-none -mx-3 px-3 sm:mx-0 sm:px-0">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat}
                   onClick={() => handleCategory(cat)}
-                  className={`flex-shrink-0 px-4 py-1.5 rounded-full font-ui text-sm font-medium transition-all ${
+                  className={`flex-shrink-0 px-3 py-1 rounded-full font-ui text-xs font-semibold transition-all ${
                     category === cat
                       ? 'bg-brand-600 text-white shadow-sm'
                       : 'bg-white border border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600'
@@ -219,31 +219,31 @@ export default function Home({ user, profile }) {
               ))}
             </div>
 
-            {/* Publication grid */}
+            {/* Publication list */}
             {loading ? (
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2.5 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
                 {[...Array(4)].map((_,i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden animate-pulse">
-                    <div className="h-44 bg-slate-100" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-3 bg-slate-100 rounded w-1/3" />
-                      <div className="h-5 bg-slate-100 rounded w-4/5" />
-                      <div className="h-3 bg-slate-100 rounded w-full" />
+                  <div key={i} className="bg-white rounded-xl border border-slate-100 overflow-hidden animate-pulse flex sm:flex-col h-24 sm:h-auto">
+                    <div className="w-24 sm:w-full h-24 sm:h-44 bg-slate-100 flex-shrink-0" />
+                    <div className="p-3 flex-1 space-y-2">
+                      <div className="h-2.5 bg-slate-100 rounded w-1/3" />
+                      <div className="h-4 bg-slate-100 rounded w-4/5" />
+                      <div className="h-2.5 bg-slate-100 rounded w-full" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="text-5xl mb-4">📜</div>
-                <h3 className="font-display text-xl font-bold text-slate-700 mb-2">No publications found</h3>
+              <div className="text-center py-12">
+                <div className="text-4xl mb-3">📜</div>
+                <h3 className="font-display text-lg font-bold text-slate-700 mb-2">No publications found</h3>
                 <p className="font-ui text-slate-400 text-sm">{search ? 'Try a different search term.' : 'Be the first to submit one!'}</p>
-                <Link href="/submit" className="inline-block mt-5 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-ui font-semibold text-sm">
+                <Link href="/submit" className="inline-block mt-4 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-ui font-semibold text-sm">
                   Submit Article
                 </Link>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2.5 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
                 {filtered.map(pub => <PublicationCard key={pub.id} pub={pub} />)}
               </div>
             )}
@@ -313,12 +313,12 @@ export default function Home({ user, profile }) {
       </div>
 
       {/* Submit CTA — mobile only */}
-      <div className="lg:hidden px-4 mb-8">
-        <div className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-5 text-white text-center">
-          <div className="text-3xl mb-2">✍️</div>
-          <h3 className="font-display text-base font-bold mb-1.5">Share Your Message</h3>
-          <p className="font-ui text-xs text-blue-200 mb-4">Submit your sermon, testimony, or devotional.</p>
-          <Link href="/submit" className="inline-block px-6 py-2.5 bg-white text-brand-700 rounded-xl font-ui font-bold text-sm hover:bg-blue-50 transition-colors">
+      <div className="lg:hidden px-3 mb-6">
+        <div className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-4 text-white text-center">
+          <div className="text-2xl mb-1.5">✍️</div>
+          <h3 className="font-display text-sm font-bold mb-1">Share Your Message</h3>
+          <p className="font-ui text-xs text-blue-200 mb-3">Submit your sermon, testimony, or devotional.</p>
+          <Link href="/submit" className="inline-block px-5 py-2 bg-white text-brand-700 rounded-xl font-ui font-bold text-xs hover:bg-blue-50 transition-colors">
             Submit Now
           </Link>
         </div>
