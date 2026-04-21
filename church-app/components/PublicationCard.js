@@ -13,83 +13,90 @@ const CATEGORIES = {
 }
 
 export default function PublicationCard({ pub }) {
-  const cat      = CATEGORIES[pub.category] || CATEGORIES.general
-  const dateStr  = new Date(pub.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
+  const cat        = CATEGORIES[pub.category] || CATEGORIES.general
+  const dateStr    = new Date(pub.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
   const authorName = pub.profiles?.full_name || pub.author_name || 'Anonymous'
-  const initials = authorName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()
-  const ytThumb  = pub.youtube_url ? getYouTubeThumbnail(pub.youtube_url) : null
+  const initials   = authorName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()
+  const ytThumb    = pub.youtube_url ? getYouTubeThumbnail(pub.youtube_url) : null
 
   return (
-    <article className="pub-card bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden shadow-sm flex flex-col group">
+    <article className="pub-card bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm flex flex-col w-full">
 
-      {/* Thumbnail - shorter on mobile, full on desktop */}
+      {/* Thumbnail — full width, proportional height */}
       <Link href={`/publication/${pub.id}`}
-        className="block relative h-28 sm:h-44 bg-gradient-to-br from-brand-800 to-brand-600 overflow-hidden flex-shrink-0">
+        className="block relative w-full h-44 sm:h-48 bg-gradient-to-br from-brand-800 to-brand-600 overflow-hidden flex-shrink-0">
         {pub.cover_image_url ? (
-          <Image src={pub.cover_image_url} alt={pub.title} fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Image
+            src={pub.cover_image_url}
+            alt={pub.title}
+            fill
+            className="object-cover hover:scale-105 transition-transform duration-500"
+          />
         ) : ytThumb ? (
           <>
             <Image src={ytThumb} alt={pub.title} fill className="object-cover opacity-80" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-9 h-9 sm:w-12 sm:h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                <HiPlay className="text-brand-700 ml-0.5" size={18} />
+              <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                <HiPlay className="text-brand-700 ml-0.5" size={22} />
               </div>
             </div>
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center opacity-20">
-            <img src="/logo.png" alt="" className="w-12 h-12 sm:w-20 sm:h-20 object-contain" />
+            <img src="/logo.png" alt="" className="w-20 h-20 object-contain" />
           </div>
         )}
+
         {pub.featured && (
-          <div className="absolute top-1.5 left-1.5 bg-gold-400 text-white text-[9px] sm:text-xs font-ui font-bold px-1.5 sm:px-2 py-0.5 rounded-full shadow-sm">★ Featured</div>
+          <div className="absolute top-2 left-2 bg-gold-400 text-white text-xs font-ui font-bold px-2 py-0.5 rounded-full shadow-sm">
+            ★ Featured
+          </div>
         )}
-        <div className="absolute bottom-1.5 right-1.5 flex gap-1">
-          {pub.pdf_url     && <span className="bg-white/90 text-slate-700 text-[9px] sm:text-xs font-ui font-bold px-1.5 py-0.5 rounded-full">📄</span>}
-          {pub.youtube_url && <span className="bg-red-600/90  text-white   text-[9px] sm:text-xs font-ui font-bold px-1.5 py-0.5 rounded-full">▶</span>}
+        <div className="absolute bottom-2 right-2 flex gap-1.5">
+          {pub.pdf_url     && <span className="bg-white/90 text-slate-700 text-xs font-ui font-bold px-2 py-0.5 rounded-full">📄</span>}
+          {pub.youtube_url && <span className="bg-red-600/90 text-white text-xs font-ui font-bold px-2 py-0.5 rounded-full">▶</span>}
         </div>
       </Link>
 
       {/* Body */}
-      <div className="p-2.5 sm:p-4 flex flex-col flex-1">
+      <div className="p-4 flex flex-col flex-1">
 
         {/* Category + date */}
-        <div className="flex items-center gap-1.5 mb-1.5 sm:mb-2">
-          <span className={`text-[9px] sm:text-xs font-ui font-bold px-1.5 sm:px-2 py-0.5 rounded-full leading-none ${cat.color}`}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className={`text-xs font-ui font-bold px-2 py-0.5 rounded-full ${cat.color}`}>
             {cat.label}
           </span>
-          <span className="hidden sm:flex items-center gap-1 text-xs font-ui text-slate-400">
+          <span className="flex items-center gap-1 text-xs font-ui text-slate-400">
             <HiCalendar size={11} /> {dateStr}
           </span>
         </div>
 
         {/* Title */}
         <Link href={`/publication/${pub.id}`}>
-          <h3 className="font-display text-xs sm:text-base font-bold text-slate-900 leading-snug mb-1 sm:mb-2 line-clamp-2 group-hover:text-brand-700 transition-colors">
+          <h3 className="font-display text-base font-bold text-slate-900 leading-snug mb-2 line-clamp-2 hover:text-brand-700 transition-colors">
             {pub.title}
           </h3>
         </Link>
 
-        {/* Summary - desktop only */}
+        {/* Summary */}
         {pub.summary && (
-          <p className="hidden sm:block font-body text-slate-500 text-sm leading-relaxed line-clamp-2 mb-3 flex-1">
+          <p className="font-body text-slate-500 text-sm leading-relaxed line-clamp-2 mb-3 flex-1">
             {pub.summary}
           </p>
         )}
 
-        {/* Footer row */}
-        <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-slate-100 mt-auto">
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-[9px] sm:text-xs font-bold flex-shrink-0">
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               {initials}
             </div>
-            <span className="font-ui text-[10px] sm:text-xs text-slate-600 font-medium truncate max-w-[54px] sm:max-w-[90px]">
+            <span className="font-ui text-xs text-slate-600 font-medium truncate max-w-[100px]">
               {authorName}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-slate-400">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-slate-400">
               {pub.like_count > 0 && (
                 <span className="flex items-center gap-0.5 text-xs font-ui">
                   <HiHeart size={12} className="text-red-400" /> {pub.like_count}
@@ -101,9 +108,10 @@ export default function PublicationCard({ pub }) {
                 </span>
               )}
             </div>
-            <Link href={`/publication/${pub.id}`}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-lg font-ui text-[9px] sm:text-xs font-semibold transition-colors">
-              <HiBookOpen size={10} className="hidden sm:block" /> Read
+            <Link
+              href={`/publication/${pub.id}`}
+              className="flex items-center gap-1 px-3 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-lg font-ui text-xs font-semibold transition-colors min-h-[36px]">
+              <HiBookOpen size={13} /> Read
             </Link>
           </div>
         </div>

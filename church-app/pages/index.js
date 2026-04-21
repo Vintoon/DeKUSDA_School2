@@ -8,19 +8,18 @@ import { supabase } from '../lib/supabase'
 import { HiSearch, HiChevronRight, HiExternalLink, HiSparkles } from 'react-icons/hi'
 
 const CATEGORIES = ['all','sermon','devotional','testimony','study','news','general']
-
-const CAT_LABELS = {
+const CAT_LABELS  = {
   all:'All', sermon:'Sermons', devotional:'Devotionals',
   testimony:'Testimonies', study:'Bible Studies', news:'Church News', general:'General'
 }
 
 const RESOURCES = [
-  { icon:'📖', name:'Bible Gateway',     url:'https://www.biblegateway.com',           desc:'Multiple Bible versions' },
-  { icon:'✍️', name:'EGW Writings',      url:'https://egwwritings.org',                desc:'Ellen G. White Estate' },
-  { icon:'🏛️', name:'White Estate',      url:'https://whiteestate.org',               desc:'Official EGW resources' },
-  { icon:'📗', name:'YouVersion',        url:'https://www.youversion.com',             desc:'Bible with reading plans' },
-  { icon:'🎓', name:'Adventist Learning', url:'https://circle.adventistlearningcommunity.com/browse/161', desc:'SDA Online Courses' },
-  { icon:'📘', name:'Amazing Facts',     url:'https://www.amazingfacts.org/bible-study/bible-study-guides', desc:'Bible study guides' },
+  { icon:'📖', name:'Bible Gateway',      url:'https://www.biblegateway.com',           desc:'Multiple Bible versions' },
+  { icon:'✍️', name:'EGW Writings',       url:'https://egwwritings.org',                desc:'Ellen G. White Estate' },
+  { icon:'🏛️', name:'White Estate',       url:'https://whiteestate.org',               desc:'Official EGW resources' },
+  { icon:'📗', name:'YouVersion',         url:'https://www.youversion.com',             desc:'Bible with reading plans' },
+  { icon:'🎓', name:'Adventist Learning', url:'https://circle.adventistlearningcommunity.com/browse/161', desc:'SDA Courses' },
+  { icon:'📘', name:'Amazing Facts',      url:'https://www.amazingfacts.org/bible-study/bible-study-guides', desc:'Bible study guides' },
 ]
 
 const SCRIPTURES = [
@@ -48,14 +47,11 @@ export default function Home({ user, profile }) {
         .order('created_at', { ascending: false })
       if (cat && cat !== 'all') q = q.eq('category', cat)
       const { data, error } = await q
-      if (error) { console.error('Publications fetch error:', error); setPublications([]) }
-      else { setPublications(data || []) }
-    } catch (e) {
-      console.error('Unexpected error:', e)
-      setPublications([])
-    } finally {
-      setLoading(false)
-    }
+      if (error) { console.error(error); setPublications([]) }
+      else        { setPublications(data || []) }
+    } catch(e) {
+      console.error(e); setPublications([])
+    } finally { setLoading(false) }
   }, [])
 
   useEffect(() => { loadPublications('all') }, [loadPublications])
@@ -63,9 +59,7 @@ export default function Home({ user, profile }) {
   async function loadStats() {
     try {
       const { data } = await supabase
-        .from('publications')
-        .select('category, author_id')
-        .eq('status', 'approved')
+        .from('publications').select('category, author_id').eq('status','approved')
       if (!data) return
       setStats({
         total: data.length,
@@ -74,23 +68,19 @@ export default function Home({ user, profile }) {
       })
     } catch(e) {}
   }
-
   useEffect(() => { loadStats() }, [])
 
-  function handleCategory(cat) {
-    setCategory(cat)
-    loadPublications(cat)
-  }
+  function handleCategory(cat) { setCategory(cat); loadPublications(cat) }
 
   const filtered = search.trim()
     ? publications.filter(p =>
         p.title?.toLowerCase().includes(search.toLowerCase()) ||
-        p.summary?.toLowerCase().includes(search.toLowerCase())
-      )
+        p.summary?.toLowerCase().includes(search.toLowerCase()))
     : publications
 
   return (
-    <>
+    /* FIX #1: overflow-x-hidden on root wrapper prevents any horizontal bleed */
+    <div className="w-full overflow-x-hidden">
       <Head>
         <title>Three Angels Publications</title>
         <meta name="description" content="Church publications, sermons, devotionals and more." />
@@ -100,35 +90,40 @@ export default function Home({ user, profile }) {
 
       <Navbar user={user} profile={profile} />
 
-      {/* ═══════════════ HERO ═══════════════ */}
-      <section className="hero-pattern text-white overflow-hidden relative">
-        {/* Decorative blobs */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* ══════════════════════════════════════
+          HERO  FIX #4: overflow-hidden on section
+          constrains decorative blobs to the section
+      ══════════════════════════════════════ */}
+      <section className="hero-pattern text-white relative overflow-hidden">
+        {/* Decorative blobs — contained by overflow-hidden above */}
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 -left-10 w-52 h-52 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <div className="relative w-full px-4 sm:px-6 py-8 sm:py-16 lg:py-20">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
 
-            {/* Left */}
-            <div className="animate-fadeUp">
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-ui font-medium text-blue-200 mb-4 sm:mb-5">
+            {/* Left column */}
+            <div className="animate-fadeUp min-w-0">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs font-ui font-medium text-blue-200 mb-4">
                 ✞ Three Angels Church Ministry
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 sm:mb-4">
-                Proclaiming<br />
-                <span className="text-gold-400">God's Word</span><br />
-                to the World
+
+              {/* FIX #4: title wraps cleanly, no forced line-breaks causing overflow */}
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
+                Proclaiming <span className="text-gold-400">God's Word</span> to the World
               </h1>
-              <p className="font-body text-sm sm:text-lg text-blue-200 leading-relaxed mb-5 sm:mb-7 max-w-lg">
+              <p className="font-body text-sm sm:text-lg text-blue-200 leading-relaxed mb-6 max-w-lg">
                 Sermons, devotionals, testimonies and Bible studies — reviewed, trusted, and freely shared.
               </p>
-              <div className="flex gap-3">
+
+              {/* FIX #9: min-h-[44px] on buttons for tap area */}
+              <div className="flex flex-wrap gap-3">
                 <a href="#publications"
-                  className="px-5 sm:px-6 py-2.5 bg-white text-brand-800 font-ui font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg text-sm">
+                  className="inline-flex items-center justify-center min-h-[44px] px-5 bg-white text-brand-800 font-ui font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg text-sm">
                   Browse Publications
                 </a>
                 <Link href="/submit"
-                  className="px-5 sm:px-6 py-2.5 bg-gold-500 hover:bg-gold-600 text-white font-ui font-bold rounded-xl transition-all shadow-lg text-sm">
+                  className="inline-flex items-center justify-center min-h-[44px] px-5 bg-gold-500 hover:bg-gold-600 text-white font-ui font-bold rounded-xl transition-all shadow-lg text-sm">
                   Submit Article
                 </Link>
               </div>
@@ -155,15 +150,18 @@ export default function Home({ user, profile }) {
         </div>
       </section>
 
-      {/* ═══════════════ STATS BAR ═══════════════ */}
+      {/* ══════════════════════════════════════
+          STATS BAR
+      ══════════════════════════════════════ */}
       <div className="bg-brand-900 border-b border-brand-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center gap-0 justify-center sm:justify-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-center sm:justify-start gap-0">
           {[
             { label:'Publications', val:stats.total,        icon:'📄' },
             { label:'Sermons',      val:stats.sermons,      icon:'🎙️' },
             { label:'Contributors', val:stats.contributors, icon:'✍️' },
           ].map((s, i) => (
-            <div key={s.label} className={`flex items-center gap-2.5 flex-shrink-0 px-4 sm:px-6 ${i > 0 ? 'border-l border-white/10' : ''}`}>
+            <div key={s.label}
+              className={`flex items-center gap-2 flex-shrink-0 px-4 sm:px-6 ${i > 0 ? 'border-l border-white/10' : ''}`}>
               <span className="text-base hidden sm:block">{s.icon}</span>
               <div>
                 <div className="font-display text-lg sm:text-2xl font-bold text-gold-400 leading-none">{s.val}</div>
@@ -174,28 +172,33 @@ export default function Home({ user, profile }) {
         </div>
       </div>
 
-      {/* ═══════════════ MAIN CONTENT ═══════════════ */}
-      <div id="publications" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      {/* ══════════════════════════════════════
+          MAIN — FIX #3: consistent px-4 throughout,
+          no negative margin bleeds that cause overflow
+      ══════════════════════════════════════ */}
+      <div id="publications" className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10">
 
-        {/* ── Mobile resource strip ── */}
-        <div className="lg:hidden mb-6">
+        {/* ── FIX #5: Study Resources — wrapping grid, NOT horizontal scroll ── */}
+        <div className="lg:hidden mb-7">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-display text-sm font-bold text-slate-800">📚 Study Resources</h3>
-            <Link href="/resources" className="font-ui text-xs font-semibold text-brand-600 hover:underline flex items-center gap-1">
+            <Link href="/resources"
+              className="font-ui text-xs font-semibold text-brand-600 hover:underline flex items-center gap-0.5 min-h-[36px]">
               View all <HiChevronRight size={13} />
             </Link>
           </div>
-          <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4">
+          {/* 3-column wrapping grid so icons never overflow or shrink */}
+          <div className="grid grid-cols-3 gap-2.5">
             {RESOURCES.map(r => (
               <a key={r.name} href={r.url} target="_blank" rel="noopener"
-                className="flex-shrink-0 flex flex-col items-center gap-1.5 bg-white border border-slate-100 rounded-xl p-2.5 shadow-sm w-[76px] text-center hover:border-brand-200 hover:shadow-md active:scale-95 transition-all">
-                <span className="text-xl leading-none">{r.icon}</span>
-                <span className="font-ui text-[10px] font-semibold text-slate-700 leading-tight line-clamp-2 w-full">{r.name}</span>
+                className="flex flex-col items-center gap-1.5 bg-white border border-slate-100 rounded-xl p-3 shadow-sm text-center hover:border-brand-200 hover:shadow-md active:scale-95 transition-all min-h-[72px]">
+                <span className="text-2xl leading-none">{r.icon}</span>
+                <span className="font-ui text-[10px] font-semibold text-slate-700 leading-tight line-clamp-2 w-full text-center">{r.name}</span>
               </a>
             ))}
             <Link href="/resources"
-              className="flex-shrink-0 flex flex-col items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 rounded-xl p-2.5 shadow-sm w-[76px] text-white text-center transition-colors active:scale-95">
-              <HiExternalLink size={18} />
+              className="flex flex-col items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 rounded-xl p-3 shadow-sm text-white text-center transition-colors active:scale-95 min-h-[72px]">
+              <HiExternalLink size={20} />
               <span className="font-ui text-[10px] font-semibold leading-tight">More</span>
             </Link>
           </div>
@@ -204,72 +207,75 @@ export default function Home({ user, profile }) {
         <div className="grid lg:grid-cols-[1fr_290px] gap-10">
 
           {/* ── Publications column ── */}
-          <div>
+          <div className="min-w-0">
 
-            {/* Search bar */}
-            <div className="relative mb-4">
-              <HiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            {/* FIX #6: Search bar — full width, consistent padding, no overflow */}
+            <div className="relative mb-4 w-full">
+              <HiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search publications…"
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl font-ui text-sm bg-white focus:border-brand-400 shadow-sm outline-none transition-shadow focus:shadow-md"
+                className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl font-ui text-sm bg-white focus:border-brand-400 shadow-sm outline-none transition-shadow focus:shadow-md min-h-[44px]"
               />
             </div>
 
-            {/* Category pills */}
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategory(cat)}
-                  className={`flex-shrink-0 px-3.5 py-1.5 rounded-full font-ui text-xs font-semibold transition-all ${
-                    category === cat
-                      ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-200'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50'
-                  }`}
-                >
-                  {CAT_LABELS[cat]}
-                </button>
-              ))}
+            {/* FIX #7: Category pills — horizontal scroll, large tap targets, no negative margins */}
+            <div className="relative mb-5">
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategory(cat)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-full font-ui text-sm font-semibold transition-all min-h-[40px] ${
+                      category === cat
+                        ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-200'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50'
+                    }`}
+                  >
+                    {CAT_LABELS[cat]}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Section label */}
             {!search && (
               <div className="flex items-center gap-2 mb-4">
-                <HiSparkles className="text-gold-500" size={15} />
-                <span className="font-ui text-xs font-bold text-slate-500 uppercase tracking-widest">
+                <HiSparkles className="text-gold-500 flex-shrink-0" size={14} />
+                <span className="font-ui text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
                   {category === 'all' ? 'Latest Publications' : CAT_LABELS[category]}
                 </span>
-                <div className="flex-1 h-px bg-slate-100" />
+                <div className="flex-1 h-px bg-slate-100 min-w-0" />
               </div>
             )}
 
-            {/* Cards grid — 2 cols on mobile, 2 on sm/md */}
+            {/* FIX #2: Cards — single column (grid-cols-1) on mobile, 2 on sm+ */}
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[...Array(4)].map((_,i) => (
-                  <div key={i} className="bg-white rounded-xl border border-slate-100 overflow-hidden animate-pulse">
-                    <div className="h-28 sm:h-44 bg-slate-100" />
-                    <div className="p-2.5 sm:p-4 space-y-2">
-                      <div className="h-2.5 bg-slate-100 rounded w-1/3" />
-                      <div className="h-4 bg-slate-100 rounded w-4/5" />
-                      <div className="h-2.5 bg-slate-100 rounded w-full" />
+                  <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden animate-pulse w-full">
+                    <div className="h-44 bg-slate-100 w-full" />
+                    <div className="p-4 space-y-3">
+                      <div className="h-3 bg-slate-100 rounded w-1/3" />
+                      <div className="h-5 bg-slate-100 rounded w-4/5" />
+                      <div className="h-3 bg-slate-100 rounded w-full" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-16">
+              <div className="text-center py-16 px-4">
                 <div className="text-5xl mb-4">📜</div>
                 <h3 className="font-display text-xl font-bold text-slate-700 mb-2">No publications found</h3>
                 <p className="font-ui text-slate-400 text-sm">{search ? 'Try a different search term.' : 'Be the first to submit one!'}</p>
-                <Link href="/submit" className="inline-block mt-5 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-ui font-semibold text-sm hover:bg-brand-700 transition-colors">
+                <Link href="/submit"
+                  className="inline-flex items-center justify-center mt-5 px-6 py-3 bg-brand-600 text-white rounded-xl font-ui font-semibold text-sm hover:bg-brand-700 transition-colors min-h-[44px]">
                   Submit Article
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filtered.map(pub => <PublicationCard key={pub.id} pub={pub} />)}
               </div>
             )}
@@ -277,8 +283,6 @@ export default function Home({ user, profile }) {
 
           {/* ── Sidebar — desktop only ── */}
           <aside className="hidden lg:flex flex-col gap-5">
-
-            {/* Resources widget */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="hero-pattern px-5 py-4 flex items-center gap-2">
                 <span className="text-lg">📚</span>
@@ -312,7 +316,8 @@ export default function Home({ user, profile }) {
                 <div className="text-3xl mb-2">✍️</div>
                 <h3 className="font-display text-base font-bold mb-1.5">Share Your Message</h3>
                 <p className="font-ui text-xs text-blue-200 mb-4 leading-relaxed">Submit your sermon, testimony, or devotional for review.</p>
-                <Link href="/submit" className="block px-4 py-2.5 bg-white text-brand-700 rounded-xl font-ui font-bold text-sm hover:bg-blue-50 transition-colors shadow-sm">
+                <Link href="/submit"
+                  className="block px-4 py-3 bg-white text-brand-700 rounded-xl font-ui font-bold text-sm hover:bg-blue-50 transition-colors shadow-sm min-h-[44px]">
                   Submit Now
                 </Link>
               </div>
@@ -325,7 +330,7 @@ export default function Home({ user, profile }) {
                 <div>
                   <label className="block font-ui text-xs text-slate-400 mb-1">Font Style</label>
                   <select onChange={e=>document.documentElement.style.setProperty('--font-body',e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-1.5 font-ui text-xs outline-none bg-white">
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 font-ui text-xs outline-none bg-white">
                     <option value="'Crimson Pro',serif">Crimson Pro</option>
                     <option value="'Georgia',serif">Georgia</option>
                     <option value="'DM Sans',sans-serif">DM Sans</option>
@@ -336,8 +341,9 @@ export default function Home({ user, profile }) {
                   <label className="block font-ui text-xs text-slate-400 mb-1">Text Size</label>
                   <div className="flex gap-1.5">
                     {['A−','A','A+','A++'].map((s,i)=>(
-                      <button key={s} onClick={()=>{ const sz=['15px','17px','19px','22px']; document.documentElement.style.fontSize=sz[i] }}
-                        className="flex-1 py-1.5 border border-slate-200 rounded-lg font-ui text-xs font-medium hover:border-brand-400 hover:text-brand-600 transition-colors">
+                      <button key={s}
+                        onClick={()=>{ const sz=['15px','17px','19px','22px']; document.documentElement.style.fontSize=sz[i] }}
+                        className="flex-1 py-2 border border-slate-200 rounded-lg font-ui text-xs font-medium hover:border-brand-400 hover:text-brand-600 transition-colors min-h-[36px]">
                         {s}
                       </button>
                     ))}
@@ -349,28 +355,36 @@ export default function Home({ user, profile }) {
         </div>
       </div>
 
-      {/* ═══════════════ MOBILE SUBMIT CTA ═══════════════ */}
-      <div className="lg:hidden px-4 mb-8">
-        <div className="bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-5 text-white text-center relative overflow-hidden shadow-lg">
+      {/* ══════════════════════════════════════
+          FIX #8: Share Your Message — mobile
+          Full-width card, centered large button
+      ══════════════════════════════════════ */}
+      <div className="lg:hidden w-full px-4 mb-8">
+        <div className="w-full bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-6 text-white text-center relative overflow-hidden shadow-lg">
           <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/5 rounded-full" />
           <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full" />
           <div className="relative">
-            <div className="text-3xl mb-2">✍️</div>
-            <h3 className="font-display text-base font-bold mb-1.5">Share Your Message</h3>
-            <p className="font-ui text-xs text-blue-200 mb-4">Submit your sermon, testimony, or devotional.</p>
-            <Link href="/submit" className="inline-block px-6 py-2.5 bg-white text-brand-700 rounded-xl font-ui font-bold text-sm hover:bg-blue-50 transition-colors">
+            <div className="text-4xl mb-3">✍️</div>
+            <h3 className="font-display text-lg font-bold mb-2">Share Your Message</h3>
+            <p className="font-ui text-sm text-blue-200 mb-5 leading-relaxed max-w-xs mx-auto">
+              Submit your sermon, testimony, or devotional for review and publication.
+            </p>
+            <Link href="/submit"
+              className="inline-flex items-center justify-center w-full max-w-xs mx-auto px-6 py-3.5 bg-white text-brand-700 rounded-xl font-ui font-bold text-sm hover:bg-blue-50 transition-colors min-h-[48px]">
               Submit Now
             </Link>
           </div>
         </div>
       </div>
 
-      {/* ═══════════════ FOOTER ═══════════════ */}
+      {/* ══════════════════════════════════════
+          FOOTER — FIX #9: proper padding, stacked on mobile
+      ══════════════════════════════════════ */}
       <footer className="hero-pattern text-white mt-4 sm:mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
+              <img src="/logo.png" alt="Logo" className="h-10 w-auto flex-shrink-0" />
               <div>
                 <div className="font-display font-bold text-base leading-none">Three Angels</div>
                 <div className="font-ui text-xs text-blue-300 mt-0.5">Publications Ministry</div>
@@ -382,10 +396,10 @@ export default function Home({ user, profile }) {
           </div>
           <div>
             <h4 className="font-ui font-bold text-xs uppercase tracking-widest text-gold-400 mb-4">Quick Links</h4>
-            <ul className="space-y-2 font-ui text-sm text-blue-200">
-              <li><Link href="/"          className="hover:text-white transition-colors">Publications</Link></li>
-              <li><Link href="/resources" className="hover:text-white transition-colors">Resources</Link></li>
-              <li><Link href="/submit"    className="hover:text-white transition-colors">Submit Article</Link></li>
+            <ul className="space-y-2.5 font-ui text-sm text-blue-200">
+              <li><Link href="/"          className="hover:text-white transition-colors inline-block py-0.5">Publications</Link></li>
+              <li><Link href="/resources" className="hover:text-white transition-colors inline-block py-0.5">Resources</Link></li>
+              <li><Link href="/submit"    className="hover:text-white transition-colors inline-block py-0.5">Submit Article</Link></li>
             </ul>
           </div>
           <div>
@@ -396,10 +410,10 @@ export default function Home({ user, profile }) {
             <p className="font-ui text-xs text-gold-400 mt-2 font-semibold">— Revelation 14:7</p>
           </div>
         </div>
-        <div className="border-t border-white/10 text-center py-4 text-xs font-ui text-blue-400">
+        <div className="border-t border-white/10 text-center py-4 px-4 text-xs font-ui text-blue-400">
           © {new Date().getFullYear()} Three Angels Publications Ministry. All rights reserved.
         </div>
       </footer>
-    </>
+    </div>
   )
 }
