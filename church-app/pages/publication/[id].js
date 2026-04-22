@@ -33,7 +33,7 @@ export default function PublicationPage({ user, profile }) {
     setLoading(true)
     const { data, error } = await supabase
       .from('publications')
-      .select('*, profiles(full_name), publication_images(*)')
+      .select('*, profiles!author_id(full_name), publication_images(*)')
       .eq('id', id)
       .eq('status', 'approved')
       .single()
@@ -48,7 +48,7 @@ export default function PublicationPage({ user, profile }) {
     // Load related
     const { data: rel } = await supabase
       .from('publications')
-      .select('id,title,category,cover_image_url,author_name,profiles(full_name),created_at')
+      .select('id,title,category,cover_image_url,author_name,profiles!author_id(full_name),created_at')
       .eq('status','approved')
       .eq('category', data.category)
       .neq('id', id)
